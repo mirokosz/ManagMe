@@ -1,6 +1,7 @@
 import type { Project } from "@/types/Project";
 
 const STORAGE_KEY = "projects";
+const ACTIVE_PROJECT_KEY = "active_project"; // 🔹 Dodany klucz
 
 class ProjectService {
   static getAllProjects(): Project[] {
@@ -28,6 +29,16 @@ class ProjectService {
   static deleteProject(id: string): void {
     const projects = this.getAllProjects().filter((project) => project.id !== id);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+  }
+
+  // 🔹 Nowe metody:
+
+  static setActiveProject(id: string): void {
+    localStorage.setItem(ACTIVE_PROJECT_KEY, id);
+  }
+
+  static getActiveProject(): string | null {
+    return localStorage.getItem(ACTIVE_PROJECT_KEY);
   }
 }
 

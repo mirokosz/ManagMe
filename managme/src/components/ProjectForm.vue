@@ -1,31 +1,41 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import type { Project } from "../types/Project";
+import { ref, watch } from "vue";
+import type { Project } from "@/types/Project";
 
-// ✅ Definiujemy props i zapewniamy domyślną wartość
 const props = defineProps<{
-    project?: Project;
+    project: Project | null
 }>();
 
 const emit = defineEmits<{
-    (e: "save", project: Project): void;
+    (e: "save", project: Project): void
 }>();
 
-// ✅ Zapewniamy, że `project` zawsze istnieje i jest edytowalny
-const project = computed(() => props.project ?? { id: "", name: "", description: "" });
+const name = ref("");
+const description = ref("");
+
+watch(
+    () => props.project,
+    (newVal) => {
+        name.value = newVal?.name || "";
+        description.value = newVal?.description || "";
+    },
+    { immediate: true }
+);
 
 const save = () => {
-    emit("save", project.value);
+    const edited: Project = {
+        id: props.project?.id || crypto.randomUUID(),
+        name: name.value,
+        description: description.value
+    };
+    emit("save", edited);
 };
 </script>
 
 <template>
-    <div>
-        <h2>Formularz Projektu</h2>
-        <form @submit.prevent="save">
-            <input v-model="project.name" placeholder="Nazwa projektu" required />
-            <textarea v-model="project.description" placeholder="Opis projektu"></textarea>
-            <button type="submit">Zapisz</button>
-        </form>
-    </div>
+    <form @submit.prevent="save">
+        <input v-model="name" class="form-control mb-2" placeholder="Nazwa projektu" required />
+        <textarea v-model="description" class="form-control mb-2" placeholder="Opis projektu"></textarea>
+        <button class="btn btn-primary">Zapisz</button>
+    </form>
 </template>

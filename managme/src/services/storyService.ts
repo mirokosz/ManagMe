@@ -1,4 +1,4 @@
-import type { Story } from "../types/Story";
+import type { Story } from "@/types/Story";
 
 const STORAGE_KEY = "stories";
 
@@ -8,27 +8,24 @@ class StoryService {
     return data ? JSON.parse(data) : [];
   }
 
-  static getByProject(projectId: string | null): Story[] {
-    if (!projectId) return [];
-    return this.getAll().filter((story) => story.projectId === projectId);
+  static getByProject(projectId: string): Story[] {
+    return this.getAll().filter(s => s.projectId === projectId);
   }
 
-  static add(story: Story): void {
-    const stories = this.getAll();
-    stories.push(story);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(stories));
+  static add(story: Story) {
+    const list = this.getAll();
+    list.push(story);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
   }
 
-  static update(updated: Story): void {
-    const stories = this.getAll().map((s) =>
-      s.id === updated.id ? updated : s
-    );
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(stories));
+  static update(story: Story) {
+    const list = this.getAll().map(s => s.id === story.id ? story : s);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
   }
 
-  static delete(id: string): void {
-    const stories = this.getAll().filter((s) => s.id !== id);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(stories));
+  static delete(id: string) {
+    const list = this.getAll().filter(s => s.id !== id);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
   }
 }
 

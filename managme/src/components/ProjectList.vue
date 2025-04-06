@@ -14,15 +14,11 @@ const emit = defineEmits(["edit", "delete"]);
             class="list-group-item d-flex justify-content-between align-items-center">
             <div>
                 <strong>{{ project.name }}</strong><br />
-                <small class="text-muted">{{ project.description }}</small>
+                <small>{{ project.description }}</small>
             </div>
             <div>
-                <button class="btn btn-sm btn-outline-primary me-2" @click="emit('edit', project)">
-                    Edytuj
-                </button>
-                <button class="btn btn-sm btn-outline-danger" @click="emit('delete', project.id)">
-                    Usuń
-                </button>
+                <button class="btn btn-sm btn-outline-primary me-2" @click="$emit('edit', project)">Edytuj</button>
+                <button class="btn btn-sm btn-outline-danger" @click="$emit('delete', project.id)">Usuń</button>
             </div>
         </li>
     </ul>

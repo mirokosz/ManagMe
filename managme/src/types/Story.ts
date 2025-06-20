@@ -1,3 +1,5 @@
+import type { Task } from "./Task";
+
 export type StoryState = "todo" | "doing" | "done";
 export type Priority = "low" | "medium" | "high";
 
@@ -10,4 +12,5 @@ export interface Story {
   createdAt: string;
   state: StoryState;
   ownerId: string;
+  tasks?: Task[]; // ← POWIĄZANE ZADANIA
 }

@@ -1,88 +1,73 @@
 <script setup lang="ts">
+import { computed } from "vue";
+import { useRouter } from "vue-router";
 import type { Story } from "@/types/Story";
-import UserService from "@/services/userService";
-import StoryService from "@/services/storyService";
+import ProjectService from "@/services/projectService";
 
 const props = defineProps<{
     stories: Story[];
 }>();
 
-const emit = defineEmits(["edit"]);
+const emit = defineEmits(["edit", "delete"]);
 
-const getOwnerName = (id: string) => {
-    const user = UserService.getLoggedUser();
-    return user.id === id ? `${user.firstName} ${user.lastName}` : "Nieznany";
-};
+const router = useRouter();
+const activeProjectId = computed(() => ProjectService.getActiveProject());
 
-const deleteStory = (id: string) => {
-    StoryService.delete(id);
-    emit("edit", null);
-};
+const storiesByState = computed(() => ({
+    todo: props.stories.filter((s) => s.state === "todo"),
+    doing: props.stories.filter((s) => s.state === "doing"),
+    done: props.stories.filter((s) => s.state === "done"),
+}));
 
-const filterByState = (state: string) => {
-    return props.stories.filter((s) => s.state === state);
+const goToTasks = (storyId: string) => {
+    router.push(`/projekty/${activeProjectId.value}/historyjki/${storyId}`);
 };
 </script>
 
 <template>
-    <div>
-        <h4 class="mb-3">Historyjki</h4>
-        <div class="row">
-            <div class="col-md-4">
-                <h5>🕒 Do zrobienia</h5>
-                <ul class="list-group">
-                    <li v-for="story in filterByState('todo')" :key="story.id"
-                        class="list-group-item d-flex justify-content-between">
-                        <div>
-                            <strong>{{ story.name }}</strong><br />
-                            <small>{{ story.description }}</small><br />
-                            <small>Priorytet: {{ story.priority }} | Autor: {{ getOwnerName(story.ownerId) }}</small>
-                        </div>
-                        <div>
-                            <button class="btn btn-sm btn-outline-primary me-1"
-                                @click="$emit('edit', story)">Edytuj</button>
-                            <button class="btn btn-sm btn-outline-danger" @click="deleteStory(story.id)">Usuń</button>
-                        </div>
-                    </li>
-                </ul>
+    <div class="row">
+        <!-- Do zrobienia -->
+        <div class="col-md-4">
+            <h6>🕒 Do zrobienia</h6>
+            <div v-for="story in storiesByState.todo" :key="story.id" class="card p-2 mb-2">
+                <strong>{{ story.name }}</strong>
+                <p class="mb-1">{{ story.description }}</p>
+                <small>Priorytet: {{ story.priority }} | Autor: Michał Rokosz</small>
+                <div class="d-flex gap-2 mt-2">
+                    <button class="btn btn-sm btn-primary" @click="emit('edit', story)">Edytuj</button>
+                    <button class="btn btn-sm btn-danger" @click="emit('delete', story)">Usuń</button>
+                    <button class="btn btn-sm btn-outline-secondary" @click="goToTasks(story.id)">Zadania</button>
+                </div>
             </div>
+        </div>
 
-            <div class="col-md-4">
-                <h5>⚙️ W trakcie</h5>
-                <ul class="list-group">
-                    <li v-for="story in filterByState('doing')" :key="story.id"
-                        class="list-group-item d-flex justify-content-between">
-                        <div>
-                            <strong>{{ story.name }}</strong><br />
-                            <small>{{ story.description }}</small><br />
-                            <small>Priorytet: {{ story.priority }} | Autor: {{ getOwnerName(story.ownerId) }}</small>
-                        </div>
-                        <div>
-                            <button class="btn btn-sm btn-outline-primary me-1"
-                                @click="$emit('edit', story)">Edytuj</button>
-                            <button class="btn btn-sm btn-outline-danger" @click="deleteStory(story.id)">Usuń</button>
-                        </div>
-                    </li>
-                </ul>
+        <!-- W trakcie -->
+        <div class="col-md-4">
+            <h6>⚙️ W trakcie</h6>
+            <div v-for="story in storiesByState.doing" :key="story.id" class="card p-2 mb-2">
+                <strong>{{ story.name }}</strong>
+                <p class="mb-1">{{ story.description }}</p>
+                <small>Priorytet: {{ story.priority }} | Autor: Michał Rokosz</small>
+                <div class="d-flex gap-2 mt-2">
+                    <button class="btn btn-sm btn-primary" @click="emit('edit', story)">Edytuj</button>
+                    <button class="btn btn-sm btn-danger" @click="emit('delete', story)">Usuń</button>
+                    <button class="btn btn-sm btn-outline-secondary" @click="goToTasks(story.id)">Zadania</button>
+                </div>
             </div>
+        </div>
 
-            <div class="col-md-4">
-                <h5>✅ Zrobione</h5>
-                <ul class="list-group">
-                    <li v-for="story in filterByState('done')" :key="story.id"
-                        class="list-group-item d-flex justify-content-between">
-                        <div>
-                            <strong>{{ story.name }}</strong><br />
-                            <small>{{ story.description }}</small><br />
-                            <small>Priorytet: {{ story.priority }} | Autor: {{ getOwnerName(story.ownerId) }}</small>
-                        </div>
-                        <div>
-                            <button class="btn btn-sm btn-outline-primary me-1"
-                                @click="$emit('edit', story)">Edytuj</button>
-                            <button class="btn btn-sm btn-outline-danger" @click="deleteStory(story.id)">Usuń</button>
-                        </div>
-                    </li>
-                </ul>
+        <!-- Zrobione -->
+        <div class="col-md-4">
+            <h6>✅ Zrobione</h6>
+            <div v-for="story in storiesByState.done" :key="story.id" class="card p-2 mb-2">
+                <strong>{{ story.name }}</strong>
+                <p class="mb-1">{{ story.description }}</p>
+                <small>Priorytet: {{ story.priority }} | Autor: Michał Rokosz</small>
+                <div class="d-flex gap-2 mt-2">
+                    <button class="btn btn-sm btn-primary" @click="emit('edit', story)">Edytuj</button>
+                    <button class="btn btn-sm btn-danger" @click="emit('delete', story)">Usuń</button>
+                    <button class="btn btn-sm btn-outline-secondary" @click="goToTasks(story.id)">Zadania</button>
+                </div>
             </div>
         </div>
     </div>

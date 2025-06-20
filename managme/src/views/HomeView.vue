@@ -26,7 +26,7 @@ const loadProjects = () => {
 
 const loadStories = () => {
     const activeProjectId = ProjectService.getActiveProject();
-    stories.value = activeProjectId ? StoryService.getByProject(activeProjectId) : [];
+    stories.value = activeProjectId ? StoryService.getByProjectId(activeProjectId) : [];
 };
 
 const saveProject = (project: Project) => {

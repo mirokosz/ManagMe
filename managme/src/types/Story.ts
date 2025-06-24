@@ -12,5 +12,5 @@ export interface Story {
   createdAt: string;
   state: StoryState;
   ownerId: string;
-  tasks?: Task[]; // ← POWIĄZANE ZADANIA
+  tasks?: Task[]; // POWIĄZANE ZADANIA
 }

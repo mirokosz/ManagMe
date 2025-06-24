@@ -1,0 +1,21 @@
+/* style.css */
+body.light-mode {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+body.dark-mode {
+  background-color: #121212;
+  color: #f1f1f1;
+}
+
+.card.dark-mode {
+  background-color: #1e1e1e;
+  color: #fff;
+  border-color: #333;
+}
+
+.btn-outline-secondary.dark-mode {
+  color: #f1f1f1;
+  border-color: #ccc;
+}

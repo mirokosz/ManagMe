@@ -9,11 +9,11 @@ class StoryService {
   }
 
   static getById(id: string): Story | undefined {
-    return this.getAll().find(s => s.id === id);
+    return this.getAll().find((s) => s.id === id);
   }
 
   static getByProjectId(projectId: string): Story[] {
-    return this.getAll().filter(s => s.projectId === projectId);
+    return this.getAll().filter((s) => s.projectId === projectId);
   }
 
   static add(story: Story): void {
@@ -23,12 +23,14 @@ class StoryService {
   }
 
   static update(story: Story): void {
-    const updated = this.getAll().map(s => s.id === story.id ? story : s);
+    const updated = this.getAll().map((s) =>
+      s.id === story.id ? story : s
+    );
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
   }
 
   static delete(id: string): void {
-    const filtered = this.getAll().filter(s => s.id !== id);
+    const filtered = this.getAll().filter((s) => s.id !== id);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
   }
 }

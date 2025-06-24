@@ -5,10 +5,7 @@ import ProjectService from "@/services/projectService";
 import StoryService from "@/services/storyService";
 import UserService from "@/services/userService";
 
-const props = defineProps<{
-    story: Story | null;
-}>();
-
+const props = defineProps<{ story: Story | null }>();
 const emit = defineEmits(["save"]);
 
 const user = UserService.getLoggedUser();
@@ -39,42 +36,41 @@ const resetForm = () => {
 watch(
     () => props.story,
     (story) => {
-        if (story) {
-            form.value = { ...story };
-        } else {
-            resetForm();
-        }
+        if (story) form.value = { ...story };
+        else resetForm();
     },
     { immediate: true }
 );
 
 const save = () => {
-    if (props.story) {
-        StoryService.update(form.value);
-    } else {
-        StoryService.add(form.value);
-    }
+    props.story ? StoryService.update(form.value) : StoryService.add(form.value);
     emit("save");
 };
 </script>
 
 <template>
-    <div class="mb-4 border p-3">
-        <h4 class="mb-3">{{ props.story ? "Edytuj" : "Dodaj" }} historyjkę</h4>
-        <form @submit.prevent="save">
-            <input v-model="form.name" placeholder="Nazwa" class="form-control mb-2" required />
-            <textarea v-model="form.description" placeholder="Opis" class="form-control mb-2" required />
-            <select v-model="form.priority" class="form-select mb-2">
+    <form @submit.prevent="save" class="border p-3 rounded shadow-sm bg-light">
+        <h5 class="mb-3">{{ props.story ? "Edytuj" : "Dodaj" }} historyjkę</h5>
+        <div class="mb-3">
+            <input v-model="form.name" class="form-control" placeholder="Nazwa" required />
+        </div>
+        <div class="mb-3">
+            <textarea v-model="form.description" class="form-control" placeholder="Opis" required />
+        </div>
+        <div class="mb-3">
+            <select v-model="form.priority" class="form-select">
                 <option value="low">Niski</option>
                 <option value="medium">Średni</option>
                 <option value="high">Wysoki</option>
             </select>
-            <select v-model="form.state" class="form-select mb-2">
+        </div>
+        <div class="mb-3">
+            <select v-model="form.state" class="form-select">
                 <option value="todo">Do zrobienia</option>
                 <option value="doing">W trakcie</option>
                 <option value="done">Zrobione</option>
             </select>
-            <button class="btn btn-primary">Zapisz</button>
-        </form>
-    </div>
+        </div>
+        <button class="btn btn-primary w-100">Zapisz</button>
+    </form>
 </template>

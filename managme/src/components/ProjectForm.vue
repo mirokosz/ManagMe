@@ -2,13 +2,8 @@
 import { ref, watch } from "vue";
 import type { Project } from "@/types/Project";
 
-const props = defineProps<{
-    project: Project | null;
-}>();
-
-const emit = defineEmits<{
-    (e: "save", project: Project): void;
-}>();
+const props = defineProps<{ project: Project | null }>();
+const emit = defineEmits<{ (e: "save", project: Project): void }>();
 
 const name = ref("");
 const description = ref("");
@@ -32,9 +27,13 @@ const save = () => {
 </script>
 
 <template>
-    <form @submit.prevent="save">
-        <input v-model="name" class="form-control mb-2" placeholder="Nazwa projektu" required />
-        <textarea v-model="description" class="form-control mb-2" placeholder="Opis projektu" />
-        <button class="btn btn-primary">Zapisz</button>
+    <form @submit.prevent="save" class="border p-3 rounded shadow-sm bg-light">
+        <div class="mb-3">
+            <input v-model="name" class="form-control" placeholder="Nazwa projektu" required />
+        </div>
+        <div class="mb-3">
+            <textarea v-model="description" class="form-control" placeholder="Opis projektu" />
+        </div>
+        <button class="btn btn-primary w-100">Zapisz</button>
     </form>
 </template>

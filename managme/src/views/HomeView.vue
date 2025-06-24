@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import type { Project } from "@/types/Project";
 import type { Story } from "@/types/Story";
-import UserService from "@/services/userService";
+
 import ProjectService from "@/services/projectService";
 import StoryService from "@/services/storyService";
+import AuthService from "@/services/authService";
 
 import ProjectForm from "@/components/ProjectForm.vue";
 import ProjectList from "@/components/ProjectList.vue";
@@ -12,7 +14,8 @@ import ProjectSelector from "@/components/ProjectSelector.vue";
 import StoryForm from "@/components/StoryForm.vue";
 import StoryList from "@/components/StoryList.vue";
 
-const user = UserService.getLoggedUser();
+// ✅ Dane użytkownika
+const user = ref<{ imie: string; nazwisko: string; rola: string } | null>(null);
 
 const projects = ref<Project[]>([]);
 const editingProject = ref<Project | null>(null);
@@ -20,13 +23,22 @@ const editingProject = ref<Project | null>(null);
 const stories = ref<Story[]>([]);
 const editingStory = ref<Story | null>(null);
 
+const router = useRouter();
+
+const logout = () => {
+    AuthService.logout();
+    router.push("/login");
+};
+
 const loadProjects = () => {
     projects.value = ProjectService.getAllProjects();
 };
 
 const loadStories = () => {
     const activeProjectId = ProjectService.getActiveProject();
-    stories.value = activeProjectId ? StoryService.getByProjectId(activeProjectId) : [];
+    stories.value = activeProjectId
+        ? StoryService.getByProjectId(activeProjectId)
+        : [];
 };
 
 const saveProject = (project: Project) => {
@@ -42,6 +54,7 @@ const saveProject = (project: Project) => {
 const deleteProject = (id: string) => {
     ProjectService.deleteProject(id);
     loadProjects();
+    loadStories();
 };
 
 const editProject = (project: Project) => {
@@ -57,6 +70,11 @@ const handleEditStory = (story: Story) => {
     editingStory.value = { ...story };
 };
 
+const deleteStory = (id: string) => {
+    StoryService.delete(id);
+    loadStories();
+};
+
 const handleProjectChange = () => {
     editingStory.value = null;
     loadStories();
@@ -65,6 +83,7 @@ const handleProjectChange = () => {
 onMounted(() => {
     loadProjects();
     loadStories();
+    user.value = AuthService.getUser();
 });
 </script>
 
@@ -73,7 +92,14 @@ onMounted(() => {
         <div class="card shadow p-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2>ManagMe - Projekty</h2>
-                <div class="text-muted"><strong>Zalogowany:</strong> {{ user.firstName }} {{ user.lastName }}</div>
+                <div v-if="user" class="text-end">
+                    <div class="text-muted mb-1">
+                        <strong>Zalogowany:</strong> {{ user.imie }} {{ user.nazwisko }}
+                        <br />
+                        <strong>Rola:</strong> {{ user.rola }}
+                    </div>
+                    <button class="btn btn-outline-secondary btn-sm" @click="logout">Wyloguj się</button>
+                </div>
             </div>
 
             <ProjectSelector @change="handleProjectChange" />
@@ -96,7 +122,7 @@ onMounted(() => {
                     <StoryForm :story="editingStory" @save="handleStorySaved" />
                 </div>
                 <div class="col-md-6">
-                    <StoryList :stories="stories" @edit="handleEditStory" />
+                    <StoryList :stories="stories" @edit="handleEditStory" @delete="deleteStory" />
                 </div>
             </div>
         </div>

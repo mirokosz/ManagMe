@@ -1,36 +1,35 @@
 import type { Project } from "@/types/Project";
+import AuthService from "./authService";
 
-const STORAGE_KEY = "projects";
-const ACTIVE_KEY = "active_project";
+const API_URL = "http://localhost:3000/api/projects";
 
 class ProjectService {
-  static getAllProjects(): Project[] {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
+  static async getAllProjects(): Promise<Project[]> {
+    const response = await AuthService.axios().get(API_URL);
+    return response.data.map((p: any) => ({
+      ...p,
+      id: p._id
+    }));
   }
 
-  static addProject(project: Project) {
-    const list = this.getAllProjects();
-    list.push(project);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  static async addProject(project: Project): Promise<void> {
+    await AuthService.axios().post(API_URL, project);
   }
 
-  static updateProject(project: Project) {
-    const list = this.getAllProjects().map(p => p.id === project.id ? project : p);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  static async updateProject(project: Project): Promise<void> {
+    await AuthService.axios().put(`${API_URL}/${project.id}`, project);
   }
 
-  static deleteProject(id: string) {
-    const list = this.getAllProjects().filter(p => p.id !== id);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  static async deleteProject(id: string): Promise<void> {
+    await AuthService.axios().delete(`${API_URL}/${id}`);
   }
 
   static setActiveProject(id: string) {
-    localStorage.setItem(ACTIVE_KEY, id);
+    localStorage.setItem("active_project", id);
   }
 
   static getActiveProject(): string | null {
-    return localStorage.getItem(ACTIVE_KEY);
+    return localStorage.getItem("active_project");
   }
 }
 

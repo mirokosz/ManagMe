@@ -1,37 +1,37 @@
 import type { Story } from "@/types/Story";
+import AuthService from "./authService";
 
-const STORAGE_KEY = "stories";
+const API_URL = "http://localhost:3000/api/stories";
 
 class StoryService {
-  static getAll(): Story[] {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
+  static async getByProjectId(projectId: string): Promise<Story[]> {
+    const response = await AuthService.axios().get(`${API_URL}/${projectId}`);
+    return response.data.map((s: any) => ({
+      ...s,
+      id: s._id,
+    }));
   }
 
-  static getById(id: string): Story | undefined {
-    return this.getAll().find((s) => s.id === id);
+  static async add(story: Story): Promise<Story> {
+    const res = await AuthService.axios().post(API_URL, story);
+    const s = res.data;
+    return { ...s, id: s._id };
   }
 
-  static getByProjectId(projectId: string): Story[] {
-    return this.getAll().filter((s) => s.projectId === projectId);
+  static async update(story: Story): Promise<Story> {
+    const res = await AuthService.axios().put(`${API_URL}/${story.id}`, story);
+    const s = res.data;
+    return { ...s, id: s._id };
   }
 
-  static add(story: Story): void {
-    const stories = this.getAll();
-    stories.push(story);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(stories));
+  static async delete(id: string): Promise<void> {
+    await AuthService.axios().delete(`${API_URL}/${id}`);
   }
 
-  static update(story: Story): void {
-    const updated = this.getAll().map((s) =>
-      s.id === story.id ? story : s
-    );
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-  }
-
-  static delete(id: string): void {
-    const filtered = this.getAll().filter((s) => s.id !== id);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+  static async getById(id: string): Promise<Story | null> {
+  const res = await AuthService.axios().get(`${API_URL}/single/${id}`);
+  const s = res.data;
+  return s ? { ...s, id: s._id } : null;
   }
 }
 

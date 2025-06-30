@@ -17,16 +17,15 @@ const tasks = ref<Task[]>([]);
 const editingTask = ref<Task | null>(null);
 const selectedTask = ref<Task | null>(null);
 
-const loadStoryAndTasks = () => {
-    story.value = StoryService.getById(storyId);
-    tasks.value = TaskService.getByStoryId(storyId);
+const loadStoryAndTasks = async () => {
+    story.value = await StoryService.getById(storyId);
+    tasks.value = await TaskService.getByStoryId(storyId);
 };
 
-const saveTask = () => {
-    loadStoryAndTasks();
+const saveTask = async () => {
+    await loadStoryAndTasks();
     editingTask.value = null;
 };
-
 const editTask = (task: Task) => {
     editingTask.value = task;
 };

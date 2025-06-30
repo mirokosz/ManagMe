@@ -30,59 +30,67 @@ const logout = () => {
     router.push("/login");
 };
 
-const loadProjects = () => {
-    projects.value = ProjectService.getAllProjects();
+const loadProjects = async () => {
+    try {
+        projects.value = await ProjectService.getAllProjects();
+    } catch (e) {
+        console.error("Błąd ładowania projektów:", e);
+    }
 };
 
-const loadStories = () => {
-    const activeProjectId = ProjectService.getActiveProject();
-    stories.value = activeProjectId
-        ? StoryService.getByProjectId(activeProjectId)
-        : [];
+const loadStories = async () => {
+    try {
+        const activeProjectId = ProjectService.getActiveProject();
+        stories.value = activeProjectId
+            ? await StoryService.getByProjectId(activeProjectId)
+            : [];
+    } catch (e) {
+        console.error("Błąd ładowania historyjek:", e);
+    }
 };
 
-const saveProject = (project: Project) => {
+const saveProject = async (project: Project) => {
     if (editingProject.value) {
-        ProjectService.updateProject(project);
+        await ProjectService.updateProject(project);
     } else {
-        ProjectService.addProject(project);
+        await ProjectService.addProject(project);
     }
     editingProject.value = null;
-    loadProjects();
+    await loadProjects();
 };
 
-const deleteProject = (id: string) => {
-    ProjectService.deleteProject(id);
-    loadProjects();
-    loadStories();
+const deleteProject = async (id: string) => {
+    await ProjectService.deleteProject(id);
+    await loadProjects();
+    await loadStories();
 };
 
 const editProject = (project: Project) => {
     editingProject.value = { ...project };
 };
 
-const handleStorySaved = () => {
+const handleStorySaved = async () => {
     editingStory.value = null;
-    loadStories();
+    await loadStories();
 };
 
 const handleEditStory = (story: Story) => {
     editingStory.value = { ...story };
 };
 
-const deleteStory = (id: string) => {
-    StoryService.delete(id);
-    loadStories();
+const deleteStory = async (id: string) => {
+    await StoryService.delete(id);
+    await loadStories();
 };
 
-const handleProjectChange = () => {
+const handleProjectChange = async () => {
     editingStory.value = null;
-    loadStories();
+    await loadStories();
 };
 
-onMounted(() => {
-    loadProjects();
-    loadStories();
+onMounted(async () => {
+    await loadProjects();
+    await loadStories();
     user.value = AuthService.getUser();
 });
 </script>
@@ -94,8 +102,7 @@ onMounted(() => {
                 <h2>ManagMe - Projekty</h2>
                 <div v-if="user" class="text-end">
                     <div class="text-muted mb-1">
-                        <strong>Zalogowany:</strong> {{ user.imie }} {{ user.nazwisko }}
-                        <br />
+                        <strong>Zalogowany:</strong> {{ user.imie }} {{ user.nazwisko }}<br />
                         <strong>Rola:</strong> {{ user.rola }}
                     </div>
                     <button class="btn btn-outline-secondary btn-sm" @click="logout">Wyloguj się</button>

@@ -42,9 +42,14 @@ watch(
     { immediate: true }
 );
 
-const save = () => {
-    props.story ? StoryService.update(form.value) : StoryService.add(form.value);
+const save = async () => {
+    if (props.story) {
+        await StoryService.update(form.value);
+    } else {
+        await StoryService.add(form.value);
+    }
     emit("save");
+    resetForm();
 };
 </script>
 

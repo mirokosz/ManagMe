@@ -19,7 +19,7 @@ const processQueue = (error: any, token: string | null = null) => {
 
 const instance = axios.create();
 
-// Interceptor: dołącz token do każdego żądania
+//dołącz token do każdego żądania
 instance.interceptors.request.use(config => {
   const token = AuthService.getAccessToken();
   if (token && config.headers) {
@@ -28,7 +28,7 @@ instance.interceptors.request.use(config => {
   return config;
 });
 
-// Interceptor: odśwież token jeśli dostaliśmy 401
+//odśwież token jeśli dostaliśmy 401
 instance.interceptors.response.use(
   response => response,
   async error => {
@@ -78,7 +78,7 @@ class AuthService {
     localStorage.setItem("refreshToken", response.data.refreshToken);
   }
 
-  static logout() {
+  static logout() { //usuwanie tokenów
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
   }

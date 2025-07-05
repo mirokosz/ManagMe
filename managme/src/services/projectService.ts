@@ -3,6 +3,7 @@ import AuthService from "./authService";
 
 const API_URL = "http://localhost:3000/api/projects";
 
+//pobranie wszystkich projektów z backendu
 class ProjectService {
   static async getAllProjects(): Promise<Project[]> {
     const response = await AuthService.axios().get(API_URL);
@@ -11,7 +12,7 @@ class ProjectService {
       id: p._id
     }));
   }
-
+//dane dla nowego projektu
   static async addProject(project: Project): Promise<void> {
     await AuthService.axios().post(API_URL, project);
   }

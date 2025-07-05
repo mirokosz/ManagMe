@@ -3,10 +3,10 @@ import AuthService from "./authService";
 
 const API_URL = "http://localhost:3000/api/stories";
 
-class StoryService {
+class StoryService { //pobranie wszystkich historyjek danego projektu
   static async getByProjectId(projectId: string): Promise<Story[]> {
     const response = await AuthService.axios().get(`${API_URL}/${projectId}`);
-    return response.data.map((s: any) => ({
+    return response.data.map((s: any) => ({ 
       ...s,
       id: s._id,
     }));
@@ -27,7 +27,7 @@ class StoryService {
   static async delete(id: string): Promise<void> {
     await AuthService.axios().delete(`${API_URL}/${id}`);
   }
-
+//pobranie szczegółów danej historjki
   static async getById(id: string): Promise<Story | null> {
   const res = await AuthService.axios().get(`${API_URL}/single/${id}`);
   const s = res.data;

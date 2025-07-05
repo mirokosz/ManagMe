@@ -18,7 +18,7 @@ const emptyTask = (): Task => ({
     priority: "medium",
     storyId: props.storyId,
     projectId: props.projectId,
-    estimateHours: 1,
+    estimateHours: undefined as unknown as number,
     state: "todo",
     createdAt: new Date().toISOString(),
     startedAt: undefined,
@@ -60,7 +60,7 @@ const save = async () => {
 
 <template>
     <form @submit.prevent="save" class="card shadow-sm task-form">
-        <h5 class="mb-3">{{ props.task ? "✏️ Edytuj zadanie" : "➕ Dodaj zadanie" }}</h5>
+        <h5 class="mb-3">{{ props.task ? "✏️ Edytuj zadanie" : "Dodaj zadanie" }}</h5>
         <input v-model="form.name" class="form-control mb-2" placeholder="Nazwa" required />
         <textarea v-model="form.description" class="form-control mb-2" placeholder="Opis" required />
         <input v-model.number="form.estimateHours" type="number" class="form-control mb-2"
@@ -70,7 +70,9 @@ const save = async () => {
             <option value="medium">Średni</option>
             <option value="high">Wysoki</option>
         </select>
-        <button class="btn btn-primary w-100">{{ props.task ? "Zapisz zmiany" : "Dodaj zadanie" }}</button>
+        <button type="submit" class="btn btn-primary w-100">
+            {{ props.task ? "Zapisz zmiany" : "Dodaj zadanie" }}
+        </button>
     </form>
 </template>
 
@@ -80,9 +82,33 @@ const save = async () => {
     margin-bottom: 1.5rem;
     background: #fff;
     border-radius: 8px;
+    color: #212529;
+    /* Domyślny tekst */
 }
 
+/* === DARK MODE OVERRIDES === */
 .dark-mode .task-form {
     background: #2a2a2a;
+    color: #e9ecef;
+    /* tekst formularza */
 }
+
+.dark-mode .task-form h5 {
+    color: #e9ecef;
+    /* nagłówek */
+}
+
+.dark-mode .task-form .form-control,
+.dark-mode .task-form .form-select {
+    background-color: #333;
+    color: #e9ecef;
+    border-color: #444;
+}
+
+.dark-mode .task-form .form-control::placeholder,
+.dark-mode .task-form .form-select option {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* przycisk primary zostawiamy oryginalny, on ma już dobry kontrast */
 </style>

@@ -40,18 +40,31 @@ const getUserName = (id?: string) => {
 </script>
 
 <template>
-    <div class="task-details card">
-        <h5 class="mb-3">📝 Szczegóły zadania</h5>
+    <div class="task-details position-relative bg-white rounded shadow p-4 border-start border-4 border-primary">
+        <!-- przycisk zamykania -->
+        <button class="btn-close position-absolute top-0 end-0 m-2" aria-label="Zamknij"
+            @click="emit('close')"></button>
+
+        <h5 class="mb-3 text-primary">Szczegóły zadania</h5>
         <p><strong>Nazwa:</strong> {{ form.name }}</p>
         <p><strong>Opis:</strong> {{ form.description }}</p>
         <p><strong>Priorytet:</strong> {{ form.priority }}</p>
         <p><strong>Stan:</strong> {{ form.state }}</p>
-        <p><strong>Data dodania:</strong> {{ new Date(form.createdAt).toLocaleString() }}</p>
-        <p v-if="form.startedAt"><strong>Rozpoczęto:</strong> {{ new Date(form.startedAt).toLocaleString() }}</p>
-        <p v-if="form.finishedAt"><strong>Zakończono:</strong> {{ new Date(form.finishedAt).toLocaleString() }}</p>
+        <p>
+            <strong>Data dodania:</strong>
+            {{ new Date(form.createdAt).toLocaleString() }}
+        </p>
+        <p v-if="form.startedAt">
+            <strong>Rozpoczęto:</strong>
+            {{ new Date(form.startedAt).toLocaleString() }}
+        </p>
+        <p v-if="form.finishedAt">
+            <strong>Zakończono:</strong>
+            {{ new Date(form.finishedAt).toLocaleString() }}
+        </p>
         <p><strong>Przypisana osoba:</strong> {{ getUserName(form.assigneeId) }}</p>
 
-        <div class="d-flex gap-2 flex-wrap mt-3">
+        <div class="d-flex flex-wrap gap-2 mt-3">
             <select v-model="form.assigneeId" class="form-select w-auto">
                 <option value="">-- Wybierz osobę --</option>
                 <option v-for="u in userOptions" :key="u.value" :value="u.value">
@@ -59,23 +72,61 @@ const getUserName = (id?: string) => {
                 </option>
             </select>
 
-            <button @click="assignUser" class="btn btn-outline-success btn-sm">Przypisz</button>
-            <button @click="markAsDone" class="btn btn-outline-primary btn-sm" :disabled="form.state === 'done'">Oznacz
-                jako zrobione</button>
-            <button @click="emit('close')" class="btn btn-outline-secondary btn-sm">Zamknij</button>
+            <button class="btn btn-outline-success btn-sm" @click="assignUser">
+                Przypisz
+            </button>
+            <button class="btn btn-outline-primary btn-sm" @click="markAsDone" :disabled="form.state === 'done'">
+                Oznacz jako zrobione
+            </button>
         </div>
     </div>
 </template>
 
 <style scoped>
+/* jasny */
 .task-details {
-    padding: 1rem;
-    margin-top: 1rem;
-    border-left: 4px solid #007bff;
+    animation: fadeIn 0.25s ease-out;
+    max-width: 500px;
+    margin: 1rem auto;
 }
 
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ciemny */
 .dark-mode .task-details {
-    background: #2a2a2a;
-    border-left-color: #66b3ff;
+    background-color: #2b2b2b !important;
+    color: #e9ecef;
+    border-left-color: #66b3ff !important;
+}
+
+.dark-mode .task-details p,
+.dark-mode .task-details strong {
+    color: #e9ecef;
+}
+
+.dark-mode .form-select,
+.dark-mode .form-control {
+    background-color: #333 !important;
+    color: #e9ecef !important;
+    border-color: #555 !important;
+}
+
+.dark-mode .form-select option {
+    background-color: #333;
+    color: #e9ecef;
+}
+
+.dark-mode .btn-close {
+    filter: invert(1);
 }
 </style>

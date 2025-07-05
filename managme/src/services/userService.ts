@@ -9,14 +9,14 @@ const USERS: User[] = [
   },
   {
     id: "2",
-    firstName: "Anna",
-    lastName: "Developer",
+    firstName: "Jan",
+    lastName: "Kowalski",
     role: "developer",
   },
   {
     id: "3",
-    firstName: "Kamil",
-    lastName: "DevOps",
+    firstName: "Piotr",
+    lastName: "Wiśniewski",
     role: "devops",
   },
 ];
@@ -27,9 +27,9 @@ class UserService {
   }
 
   static getLoggedUser(): User {
-    return USERS[0]; // Admin jest zalogowany
+    return USERS[0]; //admin jest zalogowany
   }
-
+//zwróćenie użytkowników z rolami dev lub devops
   static getAssignableUsers(): User[] {
     return USERS.filter((u) => u.role === "developer" || u.role === "devops");
   }

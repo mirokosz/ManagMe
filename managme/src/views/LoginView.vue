@@ -31,7 +31,7 @@ const login = async () => {
     try {
         await AuthService.login(loginForm.value.login, loginForm.value.password);
         await AuthService.fetchAndStoreUser();
-        router.push("/"); // przekierowanie do aplikacji
+        router.push("/"); //przekierowanie do aplikacji
     } catch (e) {
         error.value = "Nieprawidłowy login lub hasło";
     }

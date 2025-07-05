@@ -14,7 +14,7 @@ import ProjectSelector from "@/components/ProjectSelector.vue";
 import StoryForm from "@/components/StoryForm.vue";
 import StoryList from "@/components/StoryList.vue";
 
-// ✅ Dane użytkownika
+//dane użytkownika po załadowaniu
 const user = ref<{ imie: string; nazwisko: string; rola: string } | null>(null);
 
 const projects = ref<Project[]>([]);
@@ -109,7 +109,7 @@ onMounted(async () => {
                 </div>
             </div>
 
-            <ProjectSelector @change="handleProjectChange" />
+            <ProjectSelector :projects="projects" @change="handleProjectChange" />
 
             <div class="row mt-4">
                 <div class="col-md-6">

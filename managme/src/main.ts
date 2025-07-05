@@ -4,7 +4,7 @@ import router from "./router";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
-import "@/assets/style.css"; // <- dodaj globalny styl
+import "@/assets/style.css"; 
 
 import AuthService from "@/services/authService";
 

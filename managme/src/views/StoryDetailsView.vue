@@ -37,6 +37,10 @@ const viewTask = (task: Task) => {
 const closeDetails = () => {
     selectedTask.value = null;
 };
+const deleteTask = async (taskId: string) => {
+    await TaskService.delete(taskId);
+    await loadStoryAndTasks(); //odświeżenie widoku po usunięciu
+};
 
 onMounted(loadStoryAndTasks);
 </script>
@@ -49,16 +53,14 @@ onMounted(loadStoryAndTasks);
             <p><strong>Tytuł:</strong> {{ story.name }}</p>
             <p><strong>Opis:</strong> {{ story.description }}</p>
 
-            <!-- Dodawanie / Edycja zadania -->
+            <!-- dodawanie edycja zadania -->
             <TaskForm :task="editingTask" :storyId="story.id" :projectId="story.projectId" @save="saveTask" />
 
-            <!-- Szczegóły zadania -->
+            <!-- szczegóły zadania -->
             <TaskDetails v-if="selectedTask" :task="selectedTask" @update="saveTask" @close="closeDetails" />
 
-            <hr />
-
-            <!-- Tablica zadań -->
-            <TaskBoard :tasks="tasks" @edit="editTask" @view="viewTask" />
+            <!-- pojedynczy komponent taskboard z obsługą usuwania -->
+            <TaskBoard :tasks="tasks" @edit="editTask" @view="viewTask" @delete="deleteTask" />
         </div>
 
         <div v-else>

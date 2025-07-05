@@ -1,9 +1,11 @@
+//cała logika przejść między widokami
 import { createRouter, createWebHistory, type RouteLocationNormalized } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 import StoryDetailsView from "@/views/StoryDetailsView.vue";
 import LoginView from "@/views/LoginView.vue";
 import AuthService from "@/services/authService";
 
+//definiowanie tras i widoków, każda ścieżka jest powiązana z konkretnym widokiem 
 const routes = [
   {
     path: "/login",
@@ -25,32 +27,23 @@ const routes = [
   },
 ];
 
+//tworzenie routera
 const router = createRouter({
   history: createWebHistory(),
   routes,
 });
 
-// Middleware autoryzacji
-router.beforeEach(async (to, _, next) => {
-  const requiresAuth = to.meta.requiresAuth;
-  const hasToken = !!AuthService.getAccessToken();
-  const userLoaded = !!AuthService.getUser();
+//wyciągamy czy trasa wymaga uwierzytelnienia czy mamy token i czy w pamięci jest obiekt użytkownika
+router.beforeEach((to, _, next) => {
+  const loggedIn = !!AuthService.getAccessToken();
 
-  if (requiresAuth && !hasToken) {
+  
+  if (to.meta.requiresAuth && !loggedIn) { //jeśli trasa wymaga auth i nie ma tokena to logujemy
     return next({ name: "login" });
   }
 
-  // Jeśli token jest, ale brak danych o użytkowniku – spróbuj je pobrać
-  if (requiresAuth && hasToken && !userLoaded) {
-    try {
-      await AuthService.fetchAndStoreUser();
-    } catch {
-      AuthService.logout();
-      return next({ name: "login" });
-    }
-  }
-
-  if (to.name === "login" && hasToken) {
+  
+  if (to.name === "login" && loggedIn) { //jeśli jesteśmy zalogowani przekieruj na home
     return next({ name: "home" });
   }
 
